@@ -1,0 +1,9 @@
+# Don't track content of these folders
+__pycache__/
+env/
+
+# Don't track sequence data files
+*.vcf
+
+# Misc
+.DS_Store
