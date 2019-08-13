@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-#TEST FOR PULL REQUEST
 """
 vcfkit was created and is maintained by Dane Gellerup (https://github.com/dgellerup).
 
