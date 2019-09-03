@@ -70,6 +70,27 @@ class VcfFile:
 
         self.vcfdf = vcfdf
 
+        self.common_keys = {"AA" : "ancestral allele",
+                            "AC" : "allele count in genotypes, for each ALT allele, in the same order as listed",
+                            "AD" : "Total read depth for each allele",
+                            "ADF" : "Read depth for each allele on the forward strand",
+                            "ADR" : "Read depth for each allele on the reverse strand",
+                            "AF" : "allele frequency for each ALT allele in the same order as listed: use this when estimated from primary data, not called genotypes",
+                            "AN" : "total number of alleles in called genotypes",
+                            "BQ" : "RMS base quality at this position",
+                            "CIGAR" : "cigar string describing how to align an alternate allele to the reference allele",
+                            "DB" : "dbSNP membership",
+                            "DP" : "combined depth across samples, e.g. DP=154",
+                            "END" : "end position of the variant described in this record (esp. for CNVs)",
+                            "H2" : "membership in hapmap2",
+                            "H3" : "HapMap3 membership",
+                            "MQ" : "RMS mapping quality, e.g. MQ=52",
+                            "MQ0" : "Number of MAPQ == 0 reads covering this record",
+                            "NS" : "Number of samples with data",
+                            "SB" : "strand bias at this position",
+                            "SOMATIC" : "indicates that the record is a somatic mutation, for cancer genomics",
+                            "VALIDATED" : "validated by follow-up experiment",
+                            "1000G" : "1000 Genomes membership"}
 
     def listChromosomes(self):
 
@@ -122,3 +143,14 @@ class VcfFile:
         else:
 
             return "Please enter either one location or a list containing a range [start, stop] of locations."
+
+
+    def getKey(self, key):
+
+            if key in self.common_keys.keys():
+
+                print (key, " : ", str(self.common_keys[key]))
+
+            elif key not in self.common_keys.keys():
+
+                print ("please enter a common key")
