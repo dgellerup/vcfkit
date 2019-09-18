@@ -181,7 +181,13 @@ class VcfFile:
     
     def QualifyFilter(self, Q_score):
         
-        return df.loc[df['QUAL'] >= Q_score]
+        if Q_score == int:
+            
+            return df.loc[df['QUAL'] >= Q_score]
+        
+        else:
+            
+            return "Please enter a Q score as an int."
 
 
             
