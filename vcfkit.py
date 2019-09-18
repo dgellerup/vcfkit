@@ -177,6 +177,13 @@ class VcfFile:
         else:
             
             return "Please enter a valid common key."
+        
+    
+    def QualifyFilter(self, Q_score):
+        
+        return df.loc[df['QUAL'] >= Q_score]
+
+
             
             
         
