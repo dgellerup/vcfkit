@@ -18,6 +18,7 @@ import matplotlib.pyplot as plt
 class VcfFile:
 
     common_Info_keys = {"AA" : "ancestral allele",
+
                         "AC" : "allele count in genotypes, for each ALT allele, in the same order as listed",
                         "AD" : "Total read depth for each allele",
                         "ADF" : "Read depth for each allele on the forward strand",
@@ -38,6 +39,7 @@ class VcfFile:
                         "SOMATIC" : "indicates that the record is a somatic mutation, for cancer genomics",
                         "VALIDATED" : "validated by follow-up experiment",
                         "1000G" : "1000 Genomes membership"}
+
     
     
     common_Format_keys = {"AD" : "Read depth for each allele",
@@ -55,7 +57,7 @@ class VcfFile:
                           "PL" : "Phred-scaled genotype likelihoods rounded to the closest integer", 
                           "PQ" : "Phasing quality",
                           "PS" : "Phase set"}
-    
+
 
     def __init__(self, vcf):
 
