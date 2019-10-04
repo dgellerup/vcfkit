@@ -17,7 +17,8 @@ import matplotlib.pyplot as plt
 
 class VcfFile:
 
-    common_keys = {"AA" : "ancestral allele",
+    common_Info_keys = {"AA" : "ancestral allele",
+
                         "AC" : "allele count in genotypes, for each ALT allele, in the same order as listed",
                         "AD" : "Total read depth for each allele",
                         "ADF" : "Read depth for each allele on the forward strand",
@@ -38,6 +39,25 @@ class VcfFile:
                         "SOMATIC" : "indicates that the record is a somatic mutation, for cancer genomics",
                         "VALIDATED" : "validated by follow-up experiment",
                         "1000G" : "1000 Genomes membership"}
+
+    
+    
+    common_Format_keys = {"AD" : "Read depth for each allele",
+                          "ADF" : "Read depth for each allele on the forward strand", 
+                          "ADR" : "Read depth for each allele on the reverse strand",
+                          "DP" : "Read depth",
+                          "EC" : "Expected alternate allele counts",
+                          "FT" : "Filter indicating if this genotype was 'called'",
+                          "GL" : "Genotype likelihoods",
+                          "GP" : "Genotype posterior probabilities",
+                          "GQ" : "Conditional genotype quality",
+                          "GT" : "Genotype",
+                          "HQ" : "Haplotype quality",
+                          "MQ" : "RMS mapping quality",
+                          "PL" : "Phred-scaled genotype likelihoods rounded to the closest integer", 
+                          "PQ" : "Phasing quality",
+                          "PS" : "Phase set"}
+
 
     def __init__(self, vcf):
 
@@ -147,5 +167,31 @@ class VcfFile:
 
 
     def getKey(self, key):
+        
+        if key in common_Info_key:
+            
+            print(f"{key} : {VcfFile.common_Info_keys.get(key)}")
+            
+        elif key in common_Format_key:
+            
+            print(f"{key} : {VcfFile.common_Format_keys.get(key)}")
+            
+        else:
+            
+            return "Please enter a valid common key."
+        
+    
+    def QualifyFilter(self, Q_score):
+        
+        if Q_score == int:
+            
+            return df.loc[df['QUAL'] >= Q_score]
+        
+        else:
+            
+            return "Please enter a Q score as an int."
 
-        print(f"{key} : {VcfFile.common_keys.get(key)}")
+
+            
+            
+        
