@@ -17,6 +17,7 @@ import matplotlib.pyplot as plt
 
 class VcfFile:
 
+
     common_Info_keys = {"AA" : "ancestral allele",
 
                         "AC" : "allele count in genotypes, for each ALT allele, in the same order as listed",
@@ -57,6 +58,7 @@ class VcfFile:
                           "PL" : "Phred-scaled genotype likelihoods rounded to the closest integer", 
                           "PQ" : "Phasing quality",
                           "PS" : "Phase set"}
+
 
 
     def __init__(self, vcf):
@@ -191,7 +193,3 @@ class VcfFile:
             
             return "Please enter a Q score as an int."
 
-
-            
-            
-        
