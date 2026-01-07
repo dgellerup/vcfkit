@@ -7,4 +7,4 @@
 `git clone https://github.com/dgellerup/vcfkit.git`  
 `cd vcfkit`  
 `python -m venv .venv`  
-pip install -e .
+`pip install -e .`
