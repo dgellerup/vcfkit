@@ -7,13 +7,7 @@ This module is intended to make reading, analyzing, manipulating, and writing VC
 files in Python easier, faster, and accessible to more users.
 
 """
-import os
-import gzip
 import pandas as pd
-import csv
-from Bio.Seq import Seq
-from Bio.SeqUtils import GC
-import matplotlib.pyplot as plt
 
 class VcfFile:
 
@@ -46,6 +40,7 @@ class VcfFile:
 
         metaList = [line[2:].strip() for line in lines if line.startswith("##")]
 
+        self.contigs = {}
         self.info = {}
         self.filter = {}
         self.format= {}
@@ -58,15 +53,19 @@ class VcfFile:
             elif item.startswith("source"):
                 self.source = item.split("=")[-1]
             elif item.startswith("contig"):
-                self.contig = item.split("contig=")[-1]
+                contig_dict = {}
+                contig_id = int(item.split("ID=")[-1].split(",")[0])
+                contig_dict = {}
+                contig_dict["contig"] = item.split("contig=")[-1]
                 if "species" in item:
-                    self.contigSpecies = item.strip(">").split("species=")[-1].split(",")[0]
+                    contig_dict["species"] = item.strip(">").split("species=")[-1].split(",")[0]
                 if "length" in item:
-                    self.contigLength = int(item.strip(">").split("length=")[-1].split(",")[0])
+                    contig_dict["length"] = int(item.strip(">").split("length=")[-1].split(",")[0])
                 if "assembly" in item:
-                    self.contigAssembly = item.strip(">").split("assembly=")[-1].split(",")[0]
+                    contig_dict["assembly"] = item.strip(">").split("assembly=")[-1].split(",")[0]
                 if "taxonomy" in item:
-                    self.contigTaxonomy = item.strip(">").split("taxonomy=")[-1].split(",")[0]
+                    contig_dict["taxonomy"] = item.strip(">").split("taxonomy=")[-1].split(",")[0]
+                self.contigs[contig_id] = contig_dict
             elif item.startswith("reference"):
                 self.reference = item.split("=")[-1]
             elif item.startswith("phasing"):
@@ -90,30 +89,33 @@ class VcfFile:
         vcfdf.columns = columns
         vcfdf.drop(vcfdf.index[0], inplace=True)
 
+        vcfdf["#CHROM"] = pd.to_numeric(vcfdf["#CHROM"], errors="coerce").astype("Int64")
+        vcfdf["POS"] = pd.to_numeric(vcfdf["POS"], errors="coerce").astype("Int64")
+
         self.vcfdf = vcfdf
 
 
-    def listChromosomes(self):
+    def list_chromosomes(self):
 
         return list(set(self.vcfdf['#CHROM']))
 
 
-    def getChromosomes(self, chromList):
+    def get_chromosomes(self, chromList):
 
         return self.vcfdf[self.vcfdf['#CHROM'].isin(chromList)]
 
 
-    def getSNPs(self):
+    def get_snps(self):
 
         return self.vcfdf[self.vcfdf['REF'].str.len() < 2]
 
 
-    def getMicrosatellites(self):
+    def get_microsatellites(self):
 
         return self.vcfdf[self.vcfdf['ID'].str.startswith('micro')]
 
 
-    def qFilter(self, passed='PASS'):
+    def q_filter(self, passed='PASS'):
 
         if passed == 'PASS':
             return self.vcfdf[self.vcfdf['FILTER'] == 'PASS']
@@ -123,29 +125,39 @@ class VcfFile:
             return "Please pass string argument 'PASS' or 'FAIL'"
 
 
-    def getPosition(self, chrom, pos):
+    def get_position(self, chrom: int, pos: int):
 
-        if type(chrom) == int:
+        # Handle case where user passes strings instead of integers, i.e. "20" vs 20
+        chrom, pos = int(chrom), int(pos)
 
+        try:
             chromdf = self.vcfdf[pd.to_numeric(self.vcfdf['#CHROM']) == chrom]
-
-        else:
-
-            return "Please enter an int for chromosome as the first argument."
-
-        if type(pos) == int:
-
             return chromdf[pd.to_numeric(chromdf['POS']) == pos]
+        except Exception as e:
+            print(e)
+        
 
-        elif len(pos) == 2:
+    def get_position_slice(self, chrom: int, start: int, end: int):
 
-            return chromdf[(pd.to_numeric(chromdf['POS']) >= min(pos)) & (pd.to_numeric(chromdf['POS']) <= max(pos))]
+        # Handle case where user passes strings instead of integers, i.e. "20" vs 20
+        chrom, start, end = int(chrom), int(start), int(end)
 
-        else:
+        try:
+            chromdf = self.vcfdf[pd.to_numeric(self.vcfdf['#CHROM']) == chrom]
+            return chromdf[(pd.to_numeric(chromdf['POS']) >= start) & (pd.to_numeric(chromdf['POS']) <= end)]
+        except TypeError as e:
+            print(e)
 
-            return "Please enter either one location or a list containing a range [start, stop] of locations."
+
+    def get_contig_info(self, chrom: int):
+
+        return self.contigs.get(chrom)
 
 
-    def getKey(self, key):
+    def view_common_keys(cls):
+        [print(f"{k}:\t{v}") for k, v in cls.common_keys.items()]
+
+
+    def get_common_key(self, key):
 
         print(f"{key} : {VcfFile.common_keys.get(key)}")
